@@ -27,13 +27,20 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _TaskListScreen extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+void newTask() {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return CreateTask(
+        onTaskAdded: (taskName) {
+          setState(() {
+            taskList.add([taskName, false]);
+          });
+        },
+      );
+    }
+  );
+}
 
   List taskList = [
     ["example1", false],
@@ -66,8 +73,8 @@ class _TaskListScreen extends State<MyHomePage> {
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
+        onPressed: newTask,
+        tooltip: 'Add',
         child: const Icon(Icons.add),
       ),
     );
@@ -99,6 +106,46 @@ class TaskListItem extends StatelessWidget {
           children: [
             Checkbox(value: taskCheck, onChanged: onChanged),
             Text(taskName)
+          ],
+        ),
+      ),
+    );
+  }
+}
+class CreateTask extends StatefulWidget {
+  final Function(String) onTaskAdded;
+
+  const CreateTask({super.key, required this.onTaskAdded});
+
+  @override
+  State<CreateTask> createState() => _CreateTaskState();
+}
+
+class _CreateTaskState extends State<CreateTask> {
+  final TextEditingController _controller = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: const Color.fromARGB(255, 217, 207, 245),
+      content: SizedBox(
+        height: 120,
+        child: Column(
+          children: [
+            TextField(
+              controller: _controller,
+              decoration: const InputDecoration(hintText: "Add new task"),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                if (_controller.text.isNotEmpty) {
+                  widget.onTaskAdded(_controller.text);
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text("Add Task"),
+            ),
           ],
         ),
       ),
