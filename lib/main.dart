@@ -35,22 +35,34 @@ class _TaskListScreen extends State<MyHomePage> {
     });
   }
 
+  List taskList = [
+    ["example1", false],
+    ["example2", true],
+  ];
+
+  void taskCheckToggle(bool? value, int index) {
+    setState(() {
+      taskList[index][1] = !taskList[index][1];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Color.fromARGB(255, 192, 169, 255),
         title: Text(widget.title),
       ),
 
-      body: ListView(
-        children: [
-          TaskListItem(
-            taskName: "example",
-            taskCheck: true,
-            onChanged: (p0) {},
-          )
-        ],
+      body: ListView.builder(
+        itemCount: taskList.length,
+        itemBuilder: (context, index) {
+          return TaskListItem(
+            taskName: taskList[index][0],
+            taskCheck: taskList[index][1],
+            onChanged: (value) => taskCheckToggle(value, index),
+          );
+        },
       ),
 
       floatingActionButton: FloatingActionButton(
@@ -70,13 +82,14 @@ class TaskListItem extends StatelessWidget {
   TaskListItem({
     super.key,
     required this.taskName,
-    required this.taskCheck, required onChanged
+    required this.taskCheck,
+    required this.onChanged
     });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(25),
+      padding: EdgeInsets.all(16),
       child: Container(
         padding: EdgeInsets.all(24),
         decoration: BoxDecoration(
